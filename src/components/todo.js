@@ -26,19 +26,23 @@ export default function Todo() {
         isChecked: false,
       };
       // @ts-ignore
-      setTasks([...tasks, newTask]);
+      setTasks([newTask, ...tasks]);
       localStorage.setItem("localTasks", JSON.stringify([...tasks, newTask]));
       setTask("");
     }
   }
 
   function handleCheck(task) {
-    const updated = tasks.map((t) => {
-      return t.id === task.id ? { ...t, isChecked: !t.isChecked } : t;
-    });
+    const t = tasks.find((t) => t.id === task.id);
+    const remaining = tasks.filter((t) => t.id !== task.id);
 
-    // const t = tasks.find((t) => )
-    // const deleted = tasks.filter((t) => t.id !== task.id);
+    const checked = remaining.filter((t) => t.isChecked);
+    const unchecked = remaining.filter((t) => !t.isChecked);
+
+    t.isChecked = !t.isChecked;
+    t.isChecked ? checked.push(t) : unchecked.push(t);
+
+    const updated = [...unchecked, ...checked];
 
     setTasks(updated);
     localStorage.setItem("localTasks", JSON.stringify(updated));
