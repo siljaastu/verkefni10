@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 /**
  * @typedef {object} Task
@@ -8,18 +8,18 @@ import React, { useState, useEffect } from "react";
  */
 
 export default function Todo() {
-  const [task, setTask] = useState("");
+  const [task, setTask] = useState('');
   const [tasks, setTasks] = useState([]);
 
   // Keyrir bara einu sinni þegar Todo component er búinn til
   useEffect(() => {
-    const storedTasks = localStorage.getItem("localTasks");
+    const storedTasks = localStorage.getItem('localTasks');
     if (storedTasks) {
       setTasks(JSON.parse(storedTasks));
     }
   }, []);
 
-  function addTask(e) {
+  function addTask() {
     if (task) {
       const newTask = {
         id: new Date().getTime().toString(),
@@ -28,40 +28,63 @@ export default function Todo() {
       };
       // @ts-ignore
       setTasks([newTask, ...tasks]);
-      localStorage.setItem("localTasks", JSON.stringify([...tasks, newTask]));
-      setTask("");
+      localStorage.setItem('localTasks', JSON.stringify([...tasks, newTask]));
+      setTask('');
     }
   }
 
-  function handleCheck(task) {
-    const t = tasks.find((t) => t.id === task.id);
-    const remaining = tasks.filter((t) => t.id !== task.id);
+  function handleCheck(checkedTask) {
+    const currentTask = tasks.find((t) => t.id === checkedTask.id);
+    const remaining = tasks.filter((t) => t.id !== checkedTask.id);
 
     const checked = remaining.filter((t) => t.isChecked);
     const unchecked = remaining.filter((t) => !t.isChecked);
 
-    t.isChecked = !t.isChecked;
-    t.isChecked ? checked.push(t) : unchecked.push(t);
+    currentTask.isChecked = !currentTask.isChecked;
+
+    if (currentTask.isChecked) {
+      checked.push(currentTask)
+    } else {
+      unchecked.push(currentTask);
+    }
 
     const updated = [...unchecked, ...checked];
 
     setTasks(updated);
-    localStorage.setItem("localTasks", JSON.stringify(updated));
+    localStorage.setItem('localTasks', JSON.stringify(updated));
   }
 
-  function handleDelete(task) {
-    const deleted = tasks.filter((t) => t.id !== task.id);
+  function handleDelete(deletedTask) {
+    const deleted = tasks.filter((t) => t.id !== deletedTask.id);
     setTasks(deleted);
-    localStorage.setItem("localTasks", JSON.stringify(deleted));
+    localStorage.setItem('localTasks', JSON.stringify(deleted));
   }
 
   function handleClear() {
     setTasks([]);
-    localStorage.removeItem("localTasks");
+    localStorage.removeItem('localTasks');
   }
 
   function getUnfinished() {
     return tasks.filter((t) => !t.isChecked);
+  }
+
+  function getInfoText() {
+    const numUnfinished = getUnfinished().length;
+
+    if (!numUnfinished) {
+      return 'ekki með nein ókláruð verkefni';
+    }
+    
+    if (numUnfinished === 1) {
+      return `með ${getUnfinished().length} óklárað verkefni`
+    }
+    
+    if (numUnfinished > 1) {
+      return `með ${getUnfinished().length} ókláruð verkefni`
+    }
+
+    return '';
   }
 
   return (
@@ -83,23 +106,17 @@ export default function Todo() {
         </button>
       </div>
       <div className="badge text-secondary">
-        Þú ert{" "}
-        {!getUnfinished().length
-          ? "ekki með nein ókláruð verkefni"
-          : getUnfinished().length === 1
-          ? `með ${getUnfinished().length} óklárað verkefni`
-          : getUnfinished().length > 1
-          ? `með ${getUnfinished().length} ókláruð verkefni`
-          : null}
+        Þú ert{' '}
+        {getInfoText()}
       </div>
-      {tasks.map((task) => (
-        <React.Fragment key={task.id}>
+      {tasks.map((t) => (
+        <React.Fragment key={t.id}>
           <div className="col-1">
             <button
               className={`m-2 btn ${
-                task.isChecked ? "btn-success" : "btn-light"
+                t.isChecked ? 'btn-success' : 'btn-light'
               }`}
-              onClick={() => handleCheck(task)}
+              onClick={() => handleCheck(t)}
             >
               <i className="material-icons">check</i>
             </button>
@@ -107,15 +124,15 @@ export default function Todo() {
           <div className="col-10">
             <span
               className={`form-control bg-white btn mt-2 ${
-                task.isChecked ? "text-success" : "text-dark"
+                t.isChecked ? 'text-success' : 'text-dark'
               }`}
-              style={{ textAlign: "left", fontWeight: "Bold" }}
+              style={{ textAlign: 'left', fontWeight: 'Bold' }}
             >
-              {task.title}
+              {t.title}
             </span>
           </div>
           <div className="col-1">
-            <button className=" mt-2 btn" onClick={() => handleDelete(task)}>
+            <button className=" mt-2 btn" onClick={() => handleDelete(t)}>
               <i className="material-icons">delete</i>
             </button>
           </div>
