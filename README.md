@@ -1,5 +1,5 @@
 # Verkefni 10
-ToDo listi forritaður með React, css byggt með Bootstrap og Local storage notað.
+ToDo listi forritaður með React, css byggt með Bootstrap og WebAPI Local storage notað til að geyma gögn á listanum þrátt fyrir að síðu sé hlaðið aftur.
 
 # Getting Started with Create React App
 
