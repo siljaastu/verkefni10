@@ -11,10 +11,11 @@ export default function Todo() {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
 
+  // Keyrir bara einu sinni þegar Todo component er búinn til
   useEffect(() => {
-    const geymdVerk = localStorage.getItem("localTasks");
-    if (geymdVerk) {
-      setTasks(JSON.parse(geymdVerk));
+    const storedTasks = localStorage.getItem("localTasks");
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
     }
   }, []);
 
@@ -65,23 +66,23 @@ export default function Todo() {
 
   return (
     <div className="container row">
-      <h1 className="mt-3 text-white">Gera App</h1>
-      <div className="col-8">
+      <h1 className="mt-4 mb-4 text-white">gera.is</h1>
+      <div className="col-10">
         <input
           name="task"
           type="text"
           value={task}
-          placeholder="Hvað þarftu að gera?"
+          placeholder="Hvað þarftu að gera...?"
           className="form-control"
           onChange={(e) => setTask(e.target.value)}
         />
       </div>
-      <div className="col-4">
+      <div className="col-1">
         <button className="btn btn-info form-control" onClick={addTask}>
           <i className="material-icons">add</i>
         </button>
       </div>
-      <div className="badge">
+      <div className="badge text-secondary">
         Þú ert{" "}
         {!getUnfinished().length
           ? "ekki með nein ókláruð verkefni"
@@ -95,7 +96,7 @@ export default function Todo() {
         <React.Fragment key={task.id}>
           <div className="col-1">
             <button
-              className={`mt-2 btn ${
+              className={`m-2 btn ${
                 task.isChecked ? "btn-success" : "btn-light"
               }`}
               onClick={() => handleCheck(task)}
@@ -105,7 +106,9 @@ export default function Todo() {
           </div>
           <div className="col-10">
             <span
-              className="form-control bg-white btn mt-2"
+              className={`form-control bg-white btn mt-2 ${
+                task.isChecked ? "text-success" : "text-dark"
+              }`}
               style={{ textAlign: "left", fontWeight: "Bold" }}
             >
               {task.title}
